@@ -21,8 +21,6 @@ buildpacks:
 volumes: []
 buildEnvs: []
 envs:
-- name: REDIS_HOST
-  value: 10.200.130.188:6379
 - name: GAME_EVENTING_ENABLED
   value: "true"
 - name: GAME_EVENTING_BROKER_URI

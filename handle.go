@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
-	"github.com/go-redis/redis"
 	"github.com/google/uuid"
 	"log"
 	"net/http"
@@ -33,18 +32,12 @@ type GameScore struct {
 }
 
 
-var redisHost = os.Getenv("REDIS_HOST") // This should include the port which is most of the time 6379
-var redisPassword = os.Getenv("REDIS_PASSWORD")
 var gameEventingEnabled = os.Getenv("GAME_EVENTING_ENABLED")
 var sink = os.Getenv("GAME_EVENTING_BROKER_URI")
 var cloudEventsEnabled bool = false
 // Handle an HTTP Request.
 func Handle(ctx context.Context, res http.ResponseWriter, req *http.Request) {
-	client := redis.NewClient(&redis.Options{
-		Addr:     redisHost,
-		Password: redisPassword,
-		DB:       0,
-	})
+
 
 	if gameEventingEnabled != "" && gameEventingEnabled != "false"{
 		cloudEventsEnabled = true
@@ -74,13 +67,6 @@ func Handle(ctx context.Context, res http.ResponseWriter, req *http.Request) {
 		Time:       time.Now(),
 	}
 	scoreJson, err := json.Marshal(score)
-	if err != nil {
-		http.Error(res, err.Error(), http.StatusBadRequest)
-		return
-	}
-	err = client.RPush("score-"+answers.SessionId, string(scoreJson)).Err()
-	// if there has been an error setting the value
-	// handle the error
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
