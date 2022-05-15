@@ -1,11 +1,9 @@
 name: Commit Stage
  on: push
-
  env:
    REGISTRY: ghcr.io
    IMAGE_NAME: salaboy/demo-question-2
    VERSION: ${{ github.sha }}
-
  jobs:
    build:
      name: Build and Test
